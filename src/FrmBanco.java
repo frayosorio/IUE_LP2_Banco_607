@@ -35,7 +35,9 @@ public class FrmBanco extends JFrame {
     private JTextField txtNumero, txtTitular, txtSaldoInicial, txtLimite, txtValor;
     private JComboBox cmbTipoCuenta, cmbTipoTransaccion, cmbCuenta;
 
-    JTabbedPane tp;
+    private JTabbedPane tp;
+
+    private List<Cuenta> cuentas = new ArrayList();
 
     public FrmBanco() {
         setSize(600, 400);
@@ -248,7 +250,37 @@ public class FrmBanco extends JFrame {
 
     private void btnGuardarCuentaClick() {
         pnlEditarCuenta.setVisible(false);
+        switch (cmbTipoCuenta.getSelectedIndex()) {
+            case 0:
+                cuentas.add(new Ahorros(txtNumero.getText(),
+                        txtTitular.getText(),
+                        Double.parseDouble(txtSaldoInicial.getText())));
+                break;
+            case 1:
+                cuentas.add(new Corriente(txtNumero.getText(),
+                        txtTitular.getText(),
+                        Double.parseDouble(txtSaldoInicial.getText()),
+                        Double.parseDouble(txtLimite.getText())));
+                break;
+            case 2:
+                cuentas.add(new Credito(txtNumero.getText(),
+                        txtTitular.getText(),
+                        Double.parseDouble(txtSaldoInicial.getText()),
+                        Double.parseDouble(txtLimite.getText())));
+                break;
+        }
+        mostrarCuentas();
+    }
 
+    private void mostrarCuentas() {
+        String[][] strCuentas = new String[cuentas.size()][encabezadosCuentas.length];
+        int fila = 0;
+        for (Cuenta c : cuentas) {
+            strCuentas[fila][0] = c instanceof Ahorros ? "Ahorros" : c instanceof Corriente ? "Corriente" : "credito";
+            fila++;
+        }
+        DefaultTableModel dtm=new DefaultTableModel(strCuentas, encabezadosCuentas);
+        tblCuentas.setModel(dtm);
     }
 
     private void btnCancelarCuentaClick() {
